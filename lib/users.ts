@@ -14,8 +14,15 @@ const dataDir = path.join(process.cwd(), "data");
 const dataFile = path.join(dataDir, "users.json");
 
 function ensureFile() {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-  if (!fs.existsSync(dataFile)) fs.writeFileSync(dataFile, "[]", "utf8");
+  // On serverless platforms (Vercel) the filesystem is read-only, so any
+  // mkdir/write here will throw. We swallow the error and let the calling
+  // code (authorizeSeedDirect / readAll) fall through to the env fallback.
+  try {
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+    if (!fs.existsSync(dataFile)) fs.writeFileSync(dataFile, "[]", "utf8");
+  } catch {
+    /* read-only filesystem — fall through to env-only auth */
+  }
 }
 
 function readAll(): StoredUser[] {
