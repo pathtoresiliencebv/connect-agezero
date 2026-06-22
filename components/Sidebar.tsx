@@ -3,29 +3,37 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import {
+  Home,
+  Cable,
+  ListChecks,
+  BarChart3,
+  Code2,
+  ShieldCheck,
+} from "lucide-react";
 
 const platform = [
-  { href: "/home", label: "Home", icon: "⌂" },
-  { href: "/connections", label: "Connections", icon: "≣" },
-  { href: "/tasks", label: "Tasks", icon: "✦", badge: true },
-  { href: "/usage", label: "Usage", icon: "▥" },
+  { href: "/home", label: "Home", icon: Home },
+  { href: "/connections", label: "Connections", icon: Cable },
+  { href: "/tasks", label: "Tasks", icon: ListChecks, badge: true },
+  { href: "/usage", label: "Usage", icon: BarChart3 },
 ];
 
 const resources = [
-  { href: "/api-gateway", label: "API Gateway", icon: "%" },
-  { href: "/trust-center", label: "Trust Center", icon: "◆" },
+  { href: "/api-gateway", label: "API Gateway", icon: Code2 },
+  { href: "/trust-center", label: "Trust Center", icon: ShieldCheck },
 ];
 
 function NavLink({
   href,
   label,
-  icon,
+  icon: Icon,
   active,
   badge,
 }: {
   href: string;
   label: string;
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
   active: boolean;
   badge?: boolean;
 }) {
@@ -35,7 +43,7 @@ function NavLink({
       className={active ? "nav-item-active" : "nav-item"}
       aria-current={active ? "page" : undefined}
     >
-      <span className="w-4 text-center text-base leading-none">{icon}</span>
+      <Icon className="h-4 w-4" />
       <span className="flex-1">{label}</span>
       {badge ? (
         <span className="h-1.5 w-1.5 rounded-full bg-blue-500" aria-label="New" />

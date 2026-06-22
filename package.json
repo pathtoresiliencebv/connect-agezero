@@ -14,6 +14,7 @@
     "@nangohq/frontend": "^0.61.0",
     "@nangohq/node": "^0.61.0",
     "bcryptjs": "^2.4.3",
+    "lucide-react": "^1.21.0",
     "next": "14.2.18",
     "next-auth": "^4.24.10",
     "react": "^18.3.1",
