@@ -74,13 +74,44 @@ export async function POST() {
   if (!session?.user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+  const email = session.user.email ?? "";
+
+  // Try the file-backed store first; fall back to the env-only seed user
+  // (which is what runs on Vercel serverless where the fs is read-only).
   await ensureSeedUser();
-  const user = await findUserByEmail(session.user.email ?? "");
+  let user = await findUserByEmail(email);
+  let isVirtual = false;
+  if (!user) {
+    const seedEmail = process.env.SEED_USER_EMAIL;
+    if (seedEmail && email.toLowerCase() === seedEmail.toLowerCase()) {
+      user = {
+        id: `usr_seed_${seedEmail.split("@")[0]}`,
+        email: seedEmail,
+        name: process.env.SEED_USER_NAME || seedEmail.split("@")[0],
+        passwordHash: "",
+        createdAt: new Date().toISOString(),
+      };
+      isVirtual = true;
+    }
+  }
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
   const { plain, prefix, hash } = makeApiKey();
+  if (isVirtual) {
+    // On serverless we can't persist the key. Return a one-time plaintext
+    // key anyway so the demo flow stays end-to-end; the user just won't be
+    // able to retrieve it again. (For prod, swap for Vercel KV/Postgres.)
+    return NextResponse.json({
+      key: plain,
+      prefix,
+      note:
+        "Serverless filesystem is read-only — this key is not persisted. " +
+        "Copy it now. For production, wire a real database.",
+    });
+  }
+
   const all = readKeys();
   all.push({
     id: `key_${randomBytes(8).toString("hex")}`,

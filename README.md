@@ -141,3 +141,35 @@ real Next.js server — no static export required.
 ## License
 
 MIT.
+
+---
+
+## Deployment notes
+
+### Auth on Vercel serverless
+
+Vercel's serverless functions run with a **read-only filesystem**, so the
+file-backed user store (`data/users.json`) can't be written to. The auth
+flow is set up to fall back to an **env-only seed user** so the demo
+account keeps working on every cold start:
+
+- `SEED_USER_EMAIL` and `SEED_USER_PASSWORD_PLAIN` are read at request time
+  and the password is compared directly (no bcrypt — it's the plaintext).
+- Any other users that need to sign in **must** be added via a real
+  database (see "Swapping the store" below). The fallback only covers the
+  env-configured seed account.
+
+### Swapping the store (recommended for production)
+
+The data layer is split into small files in `lib/`:
+
+| File                  | Replace with                                  |
+| --------------------- | --------------------------------------------- |
+| `lib/users.ts`        | Postgres / Vercel KV / Supabase user table    |
+| `lib/tasks-store.ts`  | Postgres / Vercel KV task table               |
+| `app/api/keys/route.ts` (write path) | Vercel KV / Postgres key store    |
+
+Vercel KV is the smallest swap: `npm i @vercel/kv`, then in each file
+replace the `fs.readFileSync` / `fs.writeFileSync` calls with `kv.get`
+/ `kv.set`. The public function signatures stay the same so no UI
+changes are needed.
