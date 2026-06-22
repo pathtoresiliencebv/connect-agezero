@@ -13,6 +13,8 @@ dist/
 
 # data
 data/users.json
+data/keys.json
+data/tasks.json
 
 # logs
 npm-debug.log*
