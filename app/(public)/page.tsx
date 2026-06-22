@@ -115,7 +115,7 @@ export default function LandingPage() {
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
                 <span className="h-2.5 w-2.5 rounded-full bg-green-ok/70" />
                 <span className="ml-3 font-mono text-[11px] text-muted">
-                  curl -X POST https://agezero-connect.vercel.app/api/nango/proxy
+                  curl -X POST https://connect.agezero.io/{`{service}`}/api/{`{endpoint}`}
                 </span>
               </div>
               <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-muted-soft">
