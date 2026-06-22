@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import MegaMenu from "@/components/MegaMenu";
 
 export default async function PublicLayout({
   children,
@@ -26,24 +27,7 @@ export default async function PublicLayout({
             </span>
           </Link>
           <nav className="flex items-center gap-2 text-sm">
-            <a
-              href="#features"
-              className="hidden text-muted-soft hover:text-white sm:inline-flex"
-            >
-              Features
-            </a>
-            <a
-              href="#how"
-              className="hidden text-muted-soft hover:text-white sm:inline-flex"
-            >
-              How it works
-            </a>
-            <a
-              href="#faq"
-              className="hidden text-muted-soft hover:text-white sm:inline-flex"
-            >
-              FAQ
-            </a>
+            <MegaMenu align="right" buttonLabel="Toolkits" />
             <Link
               href="/signup"
               className="hidden rounded-md border border-line bg-transparent px-3 py-1.5 text-muted-soft transition-colors hover:bg-white/[0.04] hover:text-white sm:inline-flex"
