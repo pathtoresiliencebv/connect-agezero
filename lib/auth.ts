@@ -1,7 +1,6 @@
 import type { NextAuthOptions, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { ensureSeedUser, findUserByEmail, verifyPassword } from "@/lib/users";
-import bcrypt from "bcryptjs";
 
 type VirtualUser = { id: string; email: string; name: string };
 
@@ -10,6 +9,9 @@ type VirtualUser = { id: string; email: string; name: string };
  * written to. As a fallback, we authorize the env-configured seed user
  * directly against SEED_USER_PASSWORD_PLAIN so the demo account keeps
  * working on every cold start.
+ *
+ * SEED_USER_PASSWORD_PLAIN holds the actual plaintext password, so a
+ * plain string comparison is the correct check (NOT bcrypt.compare).
  */
 async function authorizeSeedDirect(
   email: string,
@@ -19,10 +21,7 @@ async function authorizeSeedDirect(
   const seedPlain = process.env.SEED_USER_PASSWORD_PLAIN;
   if (!seedEmail || !seedPlain) return null;
   if (email.toLowerCase() !== seedEmail.toLowerCase()) return null;
-  // Cheap constant-time-ish comparison first; bcrypt is the source of truth.
-  if (password.length !== seedPlain.length) return null;
-  const ok = await bcrypt.compare(password, seedPlain);
-  if (!ok) return null;
+  if (password !== seedPlain) return null;
   return {
     id: `usr_seed_${seedEmail.split("@")[0]}`,
     email: seedEmail,
