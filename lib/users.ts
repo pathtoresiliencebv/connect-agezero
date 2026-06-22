@@ -27,9 +27,20 @@ function readAll(): StoredUser[] {
   }
 }
 
-function writeAll(users: StoredUser[]) {
-  ensureFile();
-  fs.writeFileSync(dataFile, JSON.stringify(users, null, 2), "utf8");
+function writeAll(users: StoredUser[]): { ok: true } | { ok: false; error: string } {
+  try {
+    ensureFile();
+    fs.writeFileSync(dataFile, JSON.stringify(users, null, 2), "utf8");
+    return { ok: true };
+  } catch (e) {
+    return {
+      ok: false,
+      error:
+        e instanceof Error
+          ? e.message
+          : "Could not persist users (read-only filesystem).",
+    };
+  }
 }
 
 /**
@@ -66,6 +77,10 @@ export async function ensureSeedUser() {
     createdAt: new Date().toISOString(),
   });
   writeAll(users);
+  // If writes fail (e.g. on Vercel serverless) we silently continue — the
+  // seed user will be re-attempted on every authorize() call. The /login
+  // page will surface a more useful error when the password check fails.
+  // For production, swap this for Vercel KV / Postgres (see README).
 }
 
 export async function findUserByEmail(

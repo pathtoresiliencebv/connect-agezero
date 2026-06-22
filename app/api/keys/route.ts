@@ -29,9 +29,20 @@ function readKeys(): KeyRecord[] {
   }
 }
 
-function writeKeys(keys: KeyRecord[]) {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-  fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2), "utf8");
+function writeKeys(keys: KeyRecord[]): { ok: true } | { ok: false; error: string } {
+  try {
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2), "utf8");
+    return { ok: true };
+  } catch (e) {
+    return {
+      ok: false,
+      error:
+        e instanceof Error
+          ? e.message
+          : "Could not persist keys (read-only filesystem).",
+    };
+  }
 }
 
 function makeApiKey(): { plain: string; prefix: string; hash: string } {
@@ -79,7 +90,18 @@ export async function POST() {
     hash,
     createdAt: new Date().toISOString(),
   });
-  writeKeys(all);
+  const w = writeKeys(all);
+  if (!w.ok) {
+    return NextResponse.json(
+      {
+        error:
+          "Could not persist key — Vercel serverless filesystems are read-only. " +
+          "Swap the file-backed store in lib/ for Vercel KV or Postgres to enable. " +
+          `Underlying error: ${w.error}`,
+      },
+      { status: 503 },
+    );
+  }
   return NextResponse.json({ key: plain, prefix });
 }
 
