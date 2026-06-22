@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
 const platform = [
-  { href: "/", label: "Home", icon: "⌂" },
+  { href: "/home", label: "Home", icon: "⌂" },
   { href: "/connections", label: "Connections", icon: "≣" },
   { href: "/tasks", label: "Tasks", icon: "✦", badge: true },
   { href: "/usage", label: "Usage", icon: "▥" },
@@ -48,7 +48,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    pathname === href || pathname.startsWith(`${href}/`);
 
   const userEmail = session?.user?.email ?? "you@example.com";
   const userInitial = (session?.user?.name ?? userEmail)
@@ -59,7 +59,7 @@ export default function Sidebar() {
   return (
     <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-ink-900/60 px-3 py-4 md:flex">
       <Link
-        href="/"
+        href="/home"
         className="mb-1 flex items-center gap-2 rounded-md px-2 py-1.5"
       >
         <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-fuchsia-500 to-violet-500 text-xs font-black text-white">

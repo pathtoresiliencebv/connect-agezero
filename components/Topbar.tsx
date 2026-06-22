@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 
 const titleByPath: Record<string, { title: string }> = {
-  "/": { title: "Home" },
+  "/home": { title: "Home" },
   "/connections": { title: "Connections" },
   "/tasks": { title: "Tasks" },
   "/usage": { title: "Usage" },
@@ -15,7 +15,7 @@ export default function Topbar() {
   const pathname = usePathname();
   const meta =
     Object.entries(titleByPath).find(([p]) =>
-      p === "/" ? pathname === "/" : pathname.startsWith(p),
+      pathname === p || pathname.startsWith(`${p}/`),
     )?.[1] ?? { title: "Agezero Connect" };
 
   return (
