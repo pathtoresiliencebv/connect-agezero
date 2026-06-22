@@ -93,6 +93,17 @@ export default function LoginForm() {
         {loading ? "Signing in…" : "Sign in"}
       </button>
 
+      <p className="mt-4 text-center text-xs text-muted">
+        Don’t have an account?{" "}
+        <a
+          className="text-muted-soft underline hover:text-white"
+          href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+        >
+          Create one
+        </a>
+        .
+      </p>
+
       <p className="mt-4 text-center text-[11px] text-muted">
         By signing in, you agree to our{" "}
         <a className="underline hover:text-white" href="#">

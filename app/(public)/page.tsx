@@ -215,8 +215,11 @@ export default function LandingPage() {
             repo, plug in your Nango keys, and deploy to your own Vercel.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/login" className="btn-primary">
-              Sign in →
+            <Link href="/signup" className="btn-primary">
+              Create free account →
+            </Link>
+            <Link href="/login" className="btn-ghost">
+              Sign in
             </Link>
             <a
               href="https://github.com/pathtoresiliencebv/connect-agezero"

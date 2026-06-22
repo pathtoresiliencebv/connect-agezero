@@ -45,6 +45,12 @@ export default async function PublicLayout({
               FAQ
             </a>
             <Link
+              href="/signup"
+              className="hidden rounded-md border border-line bg-transparent px-3 py-1.5 text-muted-soft transition-colors hover:bg-white/[0.04] hover:text-white sm:inline-flex"
+            >
+              Sign up
+            </Link>
+            <Link
               href="/login"
               className="rounded-md border border-line bg-white/[0.04] px-3 py-1.5 text-muted-soft transition-colors hover:bg-white/[0.08] hover:text-white"
             >
